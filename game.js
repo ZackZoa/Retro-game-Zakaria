@@ -1,172 +1,215 @@
-// Game variables
-let player = { x: 400, y: 500, width: 30, height: 30, color: 'blue', speed: 2, dx: 0, dy: 0 };
-let snowflakes = [];
+// Select canvas and get context
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Set canvas to full screen
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Player variables
+const player = {
+  x: canvas.width / 2 - 25,
+  y: canvas.height - 60,
+  width: 50,
+  height: 50,
+  color: "#4CAF50",
+};
+
+// Snowflakes
+const snowflakes = [];
+const redSnowflakes = [];
+const snowflakeSpeed = 2;
+const redSnowflakeSpeed = 3;
+
 let score = 0;
-let isGameOver = false;
-let isGameWon = false;
-let canvas, ctx;
+let gameRunning = false;
+let gameWon = false;
 
-// Set the canvas size dynamically based on the window size
-function setCanvasSize() {
-  canvas = document.getElementById('gameCanvas');
-  ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+// Player movement
+const keys = {};
+const playerSpeed = 3;
+
+window.addEventListener("keydown", (e) => (keys[e.key] = true));
+window.addEventListener("keyup", (e) => (keys[e.key] = false));
+
+// Game start
+function startGame() {
+  resetGame();
+  gameRunning = true;
+  spawnSnowflakes();
+  gameLoop();
+  document.getElementById("openingScreen").style.display = "none";
+  canvas.style.display = "block";
 }
 
-// Helper function to create snowflakes
-function createSnowflake() {
-  const isWhite = Math.random() > 0.5;
-  let snowflake = {
-    x: Math.random() * canvas.width,
-    y: -10,
-    size: Math.random() * 10 + 5,
-    speed: Math.random() * 1.5 + 0.5,
-    color: isWhite ? 'white' : '#8B0000',
-    isWhite: isWhite
-  };
-
-  for (let i = 0; i < snowflakes.length; i++) {
-    if (Math.abs(snowflake.x - snowflakes[i].x) < 20 && Math.abs(snowflake.y - snowflakes[i].y) < 20) {
-      return createSnowflake();
-    }
-  }
-  return snowflake;
+// Restart game
+function restartGame() {
+  resetGame();
+  document.getElementById("deathScreen").style.display = "none";
+  startGame();
 }
 
-// Initialize snowflakes
-function initializeSnowflakes() {
-  for (let i = 0; i < 20; i++) {
-    snowflakes.push(createSnowflake());
+// Return to Menu
+function returnToMenu() {
+  resetGame();
+  document.getElementById("deathScreen").style.display = "none";
+  document.getElementById("openingScreen").style.display = "flex";
+  canvas.style.display = "none";
+}
+
+// Reset game state
+function resetGame() {
+  snowflakes.length = 0;
+  redSnowflakes.length = 0;
+  player.x = canvas.width / 2 - player.width / 2;
+  player.y = canvas.height - 60;
+  score = 0;
+  gameRunning = false;
+  gameWon = false;
+}
+
+// Spawn snowflakes
+function spawnSnowflakes() {
+  setInterval(() => {
+    // White snowflakes
+    snowflakes.push({
+      x: Math.random() * (canvas.width - 20),
+      y: -20,
+      width: Math.random() > 0.5 ? 20 : 40, // Small: 20px, Big: 40px
+      height: 20,
+      color: "#FFFFFF",
+    });
+    // Red snowflakes
+    redSnowflakes.push({
+      x: Math.random() * (canvas.width - 20),
+      y: -20,
+      width: 20,
+      height: 20,
+      color: "#FF0000",
+    });
+  }, 1000);
+}
+
+// Move player and restrict boundaries
+function movePlayer() {
+  if (keys["ArrowLeft"]) {
+    player.x -= playerSpeed;
+    if (player.x < 0) player.x = 0; // Left boundary
+  }
+  if (keys["ArrowRight"]) {
+    player.x += playerSpeed;
+    if (player.x > canvas.width - player.width) player.x = canvas.width - player.width; // Right boundary
+  }
+  if (keys["ArrowUp"]) {
+    player.y -= playerSpeed;
+    if (player.y < 0) player.y = 0; // Top boundary
+  }
+  if (keys["ArrowDown"]) {
+    player.y += playerSpeed;
+    if (player.y > canvas.height - player.height) player.y = canvas.height - player.height; // Bottom boundary
   }
 }
 
-// Handle player movement
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowLeft' && player.x > 50) {
-    player.dx = -player.speed;
-  }
-  if (e.key === 'ArrowRight' && player.x < canvas.width - player.width - 50) {
-    player.dx = player.speed;
-  }
-  if (e.key === 'ArrowUp' && player.y > 50) {
-    player.dy = -player.speed;
-  }
-  if (e.key === 'ArrowDown' && player.y < canvas.height - player.height - 50) {
-    player.dy = player.speed;
-  }
-});
-
-// Stop player movement when key is released
-window.addEventListener('keyup', (e) => {
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-    player.dx = 0;
-  }
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-    player.dy = 0;
-  }
-});
-
-// Check for collisions with snowflakes
-function checkCollision(snowflake) {
-  const dx = player.x + player.width / 2 - snowflake.x;
-  const dy = player.y + player.height / 2 - snowflake.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  return distance < (snowflake.size + player.width / 2);
-}
-
-// Update the game state
-function update() {
-  if (isGameOver || isGameWon) return;
-
-  let speedFactor = Math.min(1 + score / 100, 5);
-
+// Check collisions
+function checkCollisions() {
   snowflakes.forEach((snowflake, index) => {
-    snowflake.y += snowflake.speed * speedFactor;
-
-    if (checkCollision(snowflake)) {
-      if (snowflake.isWhite) {
-        score += 1;
-        snowflakes[index] = createSnowflake();
-      } else {
-        isGameOver = true;
-      }
-    }
-
-    if (snowflake.y > canvas.height) {
-      snowflakes[index] = createSnowflake();
+    if (
+      player.x < snowflake.x + snowflake.width &&
+      player.x + player.width > snowflake.x &&
+      player.y < snowflake.y + snowflake.height &&
+      player.y + player.height > snowflake.y
+    ) {
+      score += snowflake.width === 40 ? 5 : 1; // Big snowflake = 5 points, Small = 1 point
+      snowflakes.splice(index, 1);
     }
   });
 
-  if (score >= 500) {
-    isGameWon = true;
+  redSnowflakes.forEach((red, index) => {
+    if (
+      player.x < red.x + red.width &&
+      player.x + player.width > red.x &&
+      player.y < red.y + red.height &&
+      player.y + player.height > red.y
+    ) {
+      endGame(false); // End game if red snowflake is hit
+    }
+  });
+
+  if (score >= 500 && !gameWon) {
+    endGame(true); // Win condition
   }
-
-  player.x += player.dx;
-  player.y += player.dy;
-
-  player.x = Math.max(50, Math.min(player.x, canvas.width - player.width - 50));
-  player.y = Math.max(50, Math.min(player.y, canvas.height - player.height -  50));
 }
 
-// Render the game
-function render() {
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+// End game function
+function endGame(won) {
+  gameRunning = false;
+  gameWon = won;
+  document.getElementById("deathScreen").style.display = "flex";
+  document.getElementById("finalScore").innerText = won
+    ? "Congratulations! You won with 500 points!"
+    : `You scored ${score} points. Try again!`;
+  canvas.style.display = "none";
+}
 
+// Update game elements
+function update() {
+  movePlayer();
+
+  snowflakes.forEach((snowflake) => {
+    snowflake.y += snowflakeSpeed + Math.floor(score / 10); // Increase speed every 10 points
+  });
+
+  redSnowflakes.forEach((red) => {
+    red.y += redSnowflakeSpeed + Math.floor(score / 10);
+  });
+
+  // Remove snowflakes that move off-screen
+  snowflakes.filter((snowflake) => snowflake.y < canvas.height);
+  redSnowflakes.filter((red) => red.y < canvas.height);
+
+  checkCollisions();
+}
+
+// Draw game elements
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw player
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
 
+  // Draw snowflakes
   snowflakes.forEach((snowflake) => {
     ctx.fillStyle = snowflake.color;
     ctx.beginPath();
-    ctx.arc(snowflake.x, snowflake.y, snowflake.size, 0, Math.PI * 2);
+    ctx.arc(snowflake.x, snowflake.y, snowflake.width / 2, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText(`Score: ${score}`, 10, 30);
+  // Draw red snowflakes
+  redSnowflakes.forEach((red) => {
+    ctx.fillStyle = red.color;
+    ctx.fillRect(red.x, red.y, red.width, red.height);
+  });
 
-  if (isGameOver) {
-    ctx.fillStyle = 'red';
-    ctx.font = '40px Arial';
-    ctx.fillText('GAME OVER', canvas.width / 2 - 100, canvas.height / 2);
-    ctx.font = '20px Arial';
-    ctx.fillText('Press F5 to Restart', canvas.width / 2 - 80, canvas.height / 2 + 40);
-  }
-
-  if (isGameWon) {
-    ctx.fillStyle = 'green';
-    ctx.font = '40px Arial';
-    ctx.fillText('YOU WIN!', canvas.width / 2 - 100, canvas.height / 2);
-    ctx.font = '20px Arial';
-    ctx.fillText('Press F5 to Restart', canvas.width / 2 - 80, canvas.height / 2 + 40);
-  }
+  // Draw score
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText(`Score: ${score}`, 20, 30);
 }
 
-// Game loop
+// Main game loop
 function gameLoop() {
-  update();
-  render();
-  requestAnimationFrame(gameLoop);
+  if (gameRunning) {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
 }
 
-// Start the game
-function startGame() {
-  console.log("Game is starting..."); // Debugging log
-  document.getElementById('openingScreen').style.display = 'none';
-  document.getElementById('gameCanvas').style.display = 'block';
-  setCanvasSize();
-  initializeSnowflakes(); // Initialize snowflakes after setting canvas size
-  gameLoop();
-}
-
-// Event listener for Play button
-document.getElementById('playButton').addEventListener('click', () => {
-  console.log("Play button clicked!"); // Debugging log
-  startGame();
-});
-
-// Adjust canvas size when the window is resized
-window.addEventListener('resize', setCanvasSize);
+// Event listeners for buttons
+document.getElementById("playButton").addEventListener("click", startGame);
+document.getElementById("restartButton").addEventListener("click", restartGame);
+document
+  .getElementById("menuButton")
+  .addEventListener("click", returnToMenu);

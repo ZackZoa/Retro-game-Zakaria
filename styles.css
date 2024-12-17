@@ -1,58 +1,153 @@
-/* Basic styles */
-body {
+/* General Reset */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77, #778da9);
+  color: white;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f0f0f0;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
 }
 
 canvas {
-  display: none;
-  border: 1px solid black;
-  background-color: #1a1a1a;
+  display: block;
+  background: radial-gradient(circle, #e0f7fa, #81d4fa, #4fc3f7);
 }
 
+/* Opening Screen */
 .opening-screen {
-  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
   color: white;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.game-title {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #00d9ff;
+  text-shadow: 0 0 10px #00d9ff, 0 0 20px #00b3cc;
+}
+
+.game-tagline {
+  font-size: 20px;
+  margin-bottom: 40px;
+}
+
+.play-button {
+  padding: 15px 40px;
+  font-size: 18px;
+  color: white;
+  background: #00b4d8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-button:hover {
+  background: #0077b6;
+  box-shadow: 0 0 10px #0077b6;
+}
+
+/* Instructions Section */
+.instructions {
+  margin-top: 30px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.instructions ul {
+  list-style: none;
+}
+
+.instructions li {
+  margin: 10px 0;
+}
+
+.white-text {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.red-text {
+  color: #ff4444;
+  font-weight: bold;
+}
+
+/* Death Screen */
+.death-screen {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.opening-screen h1 {
-  font-size: 36px;
-}
-
-.opening-screen p {
-  font-size: 18px;
-}
-
-.play-button {
-  padding: 15px 30px;
-  font-size: 20px;
-  cursor: pointer;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
+  width: 90%;
+  max-width: 400px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 30px;
   border-radius: 10px;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
-.play-button:hover {
-  background-color: #45a049;
+.death-screen h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #ff4f4f;
+  text-shadow: 0 0 10px #ff4f4f;
 }
 
-.play-button:active {
-  background-color: #388e3c;
+.death-screen p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.death-screen button {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 18px;
+  color: white;
+  background: #00b4d8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.death-screen button:hover {
+  background: #0077b6;
+  box-shadow: 0 0 10px #0077b6;
+}
+
+/* Buttons Styling */
+.restart-button {
+  background: #48cae4;
+}
+
+.restart-button:hover {
+  background: #0077b6;
+}
+
+.menu-button {
+  background: #ff4f4f;
+}
+
+.menu-button:hover {
+  background: #d00000;
 }

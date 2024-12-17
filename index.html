@@ -8,11 +8,33 @@
 </head>
 <body>
 
-  <!-- Opening Screen with Play Button -->
+  <!-- Opening Screen with Menu and Instructions -->
   <div id="openingScreen" class="opening-screen">
-    <h1>Welcome to Frosty Heights</h1>
-    <p>Try to catch the white snowflakes and avoid the red ones!</p>
-    <button id="playButton" class="play-button">Press Play to Start the Game!</button>
+    <div class="menu-container">
+      <h1 class="game-title">Frosty Heights</h1>
+      <p class="game-tagline">Catch the white snowflakes, avoid the red ones, and reach the top!</p>
+      <button id="playButton" class="play-button">Start Game</button>
+    </div>
+
+    <div class="instructions">
+      <h2>How to Play</h2>
+      <ul>
+        <li>Move your player left and right using the <b>Arrow Keys</b>.</li>
+        <li>Catch <span class="white-text">White Snowflakes</span> for points.</li>
+        <li>Avoid <span class="red-text">Red Snowflakes</span> or you lose!</li>
+        <li>Stay focused, and aim for the highest score.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Death Screen -->
+  <div id="deathScreen" class="death-screen" style="display: none;">
+    <h1>Game Over</h1>
+    <p>Your Score: <span id="finalScore"></span></p>
+    <div class="death-buttons">
+      <button id="restartButton" class="restart-button">Restart Game</button>
+      <button id="menuButton" class="menu-button">Return to Menu</button>
+    </div>
   </div>
 
   <!-- Canvas for Game -->
