@@ -4,12 +4,14 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const playerImg = new Image();
+playerImg.src = "player.png";
+
 const player = {
   x: canvas.width / 2 - 25,
   y: canvas.height - 60,
   width: 50,
   height: 50,
-  color: "#4CAF50",
 };
 
 const snowflakes = [];
@@ -69,7 +71,7 @@ function spawnSnowflakes() {
       height: 20,
       color: "#black",
     });
-    
+
     redSnowflakes.push({
       x: Math.random() * (canvas.width - 20),
       y: -20,
@@ -158,8 +160,8 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  // Draw player as an image
+  ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
   snowflakes.forEach((snowflake) => {
     ctx.fillStyle = snowflake.color;
