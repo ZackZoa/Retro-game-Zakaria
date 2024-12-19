@@ -5,7 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const playerImg = new Image();
-playerImg.src = "/retro-images/player.png"; 
+playerImg.src = "../retro-images/player.png"; 
 
 playerImg.onload = () => {
   document.getElementById("playButton").disabled = false;
