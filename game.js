@@ -5,7 +5,11 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const playerImg = new Image();
-playerImg.src = "player.png";
+playerImg.src = "/retro-images/player.png"; 
+
+playerImg.onload = () => {
+  document.getElementById("playButton").disabled = false;
+};
 
 const player = {
   x: canvas.width / 2 - 25,
@@ -67,7 +71,7 @@ function spawnSnowflakes() {
     snowflakes.push({
       x: Math.random() * (canvas.width - 20),
       y: -20,
-      width: Math.random() > 0.5 ? 20 : 40, // Small: 20px, Big: 40px
+      width: Math.random() > 0.5 ? 20 : 40,
       height: 20,
       color: "#black",
     });
@@ -160,7 +164,6 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw player as an image
   ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
   snowflakes.forEach((snowflake) => {
