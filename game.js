@@ -24,11 +24,16 @@ const snowflakeSpeed = 2;
 const redSnowflakeSpeed = 3;
 
 let score = 0;
+let coins = 0;
 let gameRunning = false;
 let gameWon = false;
+let speedBoostActive = false;
+let extraLifeActive = false;
 
 const keys = {};
 const playerSpeed = 3;
+const speedBoostDuration = 10000; 
+let speedBoostTimeout;
 
 window.addEventListener("keydown", (e) => (keys[e.key] = true));
 window.addEventListener("keyup", (e) => (keys[e.key] = false));
@@ -61,8 +66,13 @@ function resetGame() {
   player.x = canvas.width / 2 - player.width / 2;
   player.y = canvas.height - 60;
   score = 0;
+  coins = 0;
   gameRunning = false;
   gameWon = false;
+  speedBoostActive = false;
+  extraLifeActive = false;
+  clearTimeout(speedBoostTimeout);
+  updateScoreAndCoinsDisplay();
 }
 
 function spawnSnowflakes() {
@@ -73,7 +83,7 @@ function spawnSnowflakes() {
       y: -20,
       width: Math.random() > 0.5 ? 20 : 40,
       height: 20,
-      color: "#black",
+      color: "#FFFFFF",
     });
 
     redSnowflakes.push({
@@ -115,6 +125,8 @@ function checkCollisions() {
     ) {
       score += snowflake.width === 40 ? 5 : 1;
       snowflakes.splice(index, 1);
+      coins += 1; 
+      updateScoreAndCoinsDisplay();
     }
   });
 
@@ -125,7 +137,12 @@ function checkCollisions() {
       player.y < red.y + red.height &&
       player.y + player.height > red.y
     ) {
-      endGame(false); 
+      if (extraLifeActive) {
+        extraLifeActive = false; 
+        redSnowflakes.splice(index, 1);
+      } else {
+        endGame(false); 
+      }
     }
   });
 
@@ -191,8 +208,39 @@ function gameLoop() {
   }
 }
 
+function updateScoreAndCoinsDisplay() {
+  document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
+  document.getElementById("coinsDisplay").innerText = `Coins: ${coins}`;
+}
+
+function openShop() {
+  document.getElementById("shopModal").style.display = "flex";
+}
+
+function closeShop() {
+  document.getElementById("shopModal").style.display = "none";
+}
+
+function buySpeedBoost() {
+  if (coins >= 10) {
+    coins -= 10;
+    speedBoostActive = true;
+    updateScoreAndCoinsDisplay();
+    setTimeout(() => {
+      speedBoostActive = false;
+    }, speedBoostDuration);
+  }
+}
+
+function buyExtraLife() {
+  if (coins >= 20) {
+    coins -= 20;
+    extraLifeActive = true;
+    updateScoreAndCoinsDisplay();
+  }
+}
+
 document.getElementById("playButton").addEventListener("click", startGame);
 document.getElementById("restartButton").addEventListener("click", restartGame);
-document
-  .getElementById("menuButton")
-  .addEventListener("click", returnToMenu);
+document.getElementById("menuButton").addEventListener("click", returnToMenu);
+document.getElementById("closeShopButton").addEventListener("click", closeShop);

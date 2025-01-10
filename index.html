@@ -40,6 +40,17 @@
   <!-- Canvas for Game -->
   <canvas id="gameCanvas"></canvas>
 
+  <!-- Shop Modal -->
+  <div id="shopModal" class="shop-modal">
+    <div class="shop-container">
+      <h2>Shop</h2>
+      <p>Coins: <span id="coinsDisplay">0</span></p>
+      <button id="speedBoostButton" class="shop-item" onclick="buySpeedBoost()">Speed Boost (10 Coins)</button>
+      <button id="extraLifeButton" class="shop-item" onclick="buyExtraLife()">Extra Life (20 Coins)</button>
+      <button id="closeShopButton" class="shop-item">Close Shop</button>
+    </div>
+  </div>
+
   <script src="game.js"></script>
 </body>
 </html>

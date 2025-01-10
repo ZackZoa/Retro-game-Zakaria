@@ -146,3 +146,57 @@ canvas {
 .menu-button:hover {
   background: #d00000;
 }
+
+.shop-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.shop-container {
+  background: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  width: 300px;
+}
+
+.shop-item {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 18px;
+  color: white;
+  background: #00b4d8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.shop-item:hover {
+  background: #0077b6;
+  box-shadow: 0 0 10px #0077b6;
+}
+
+#scoreDisplay,
+#coinsDisplay {
+  position: absolute;
+  top: 20px;
+  font-size: 18px;
+  color: white;
+}
+
+#scoreDisplay {
+  left: 20px;
+}
+
+#coinsDisplay {
+  right: 20px;
+}
