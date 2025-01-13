@@ -20,6 +20,7 @@ canvas {
   background: radial-gradient(circle, #e0f7fa, #81d4fa, #4fc3f7);
 }
 
+/* Opening Screen */
 .opening-screen {
   position: absolute;
   top: 0;
@@ -63,6 +64,25 @@ canvas {
   box-shadow: 0 0 10px #0077b6;
 }
 
+/* Shop Icon */
+.shop-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 30px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.shop-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Instructions */
 .instructions {
   margin-top: 30px;
   font-size: 18px;
@@ -87,6 +107,7 @@ canvas {
   font-weight: bold;
 }
 
+/* Death Screen */
 .death-screen {
   position: absolute;
   top: 50%;
@@ -147,6 +168,7 @@ canvas {
   background: #d00000;
 }
 
+/* Shop Model */
 .shop-modal {
   display: none;
   position: fixed;
@@ -159,6 +181,7 @@ canvas {
   align-items: center;
 }
 
+/*Waar de container voor de emoji gaat zijn*/
 .shop-container {
   background: rgba(0, 0, 0, 0.9);
   padding: 20px;
@@ -168,6 +191,7 @@ canvas {
   width: 300px;
 }
 
+/* De groote van de items en zijn positie*/
 .shop-item {
   padding: 10px 20px;
   margin: 10px;
@@ -180,11 +204,13 @@ canvas {
   transition: all 0.3s ease;
 }
 
+/*Shop hover zodat ik er over heen kan*/
 .shop-item:hover {
   background: #0077b6;
   box-shadow: 0 0 10px #0077b6;
 }
 
+/* Score and Coins Display */
 #scoreDisplay,
 #coinsDisplay {
   position: absolute;

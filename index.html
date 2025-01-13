@@ -8,12 +8,14 @@
 </head>
 <body>
 
-  <!-- Opening Screen with Menu and Instructions -->
   <div id="openingScreen" class="opening-screen">
     <div class="menu-container">
       <h1 class="game-title">Frosty Heights</h1>
       <p class="game-tagline">Catch the white snowflakes, avoid the red ones, and reach the top!</p>
       <button id="playButton" class="play-button">Start Game</button>
+
+      <!-- Shop Icon -->
+      <button id="shopButton" class="shop-icon">🛒</button>
     </div>
 
     <div class="instructions">
@@ -27,7 +29,6 @@
     </div>
   </div>
 
-  <!-- Death Screen -->
   <div id="deathScreen" class="death-screen" style="display: none;">
     <h1>Game Over</h1>
     <p>Your Score: <span id="finalScore"></span></p>
@@ -37,10 +38,9 @@
     </div>
   </div>
 
-  <!-- Canvas for Game -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Shop Modal -->
+  <!-- Shop Model -->
   <div id="shopModal" class="shop-modal">
     <div class="shop-container">
       <h2>Shop</h2>

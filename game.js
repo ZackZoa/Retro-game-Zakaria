@@ -38,6 +38,13 @@ let speedBoostTimeout;
 window.addEventListener("keydown", (e) => (keys[e.key] = true));
 window.addEventListener("keyup", (e) => (keys[e.key] = false));
 
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  player.x = canvas.width / 2 - player.width / 2;
+  player.y = canvas.height - 60;
+});
+
 function startGame() {
   resetGame();
   gameRunning = true;
@@ -77,7 +84,6 @@ function resetGame() {
 
 function spawnSnowflakes() {
   setInterval(() => {
-    // White snowflakes
     snowflakes.push({
       x: Math.random() * (canvas.width - 20),
       y: -20,
@@ -96,6 +102,7 @@ function spawnSnowflakes() {
   }, 1000);
 }
 
+//Player movement
 function movePlayer() {
   if (keys["ArrowLeft"]) {
     player.x -= playerSpeed;
@@ -172,8 +179,8 @@ function update() {
     red.y += redSnowflakeSpeed + Math.floor(score / 10);
   });
 
-  snowflakes.filter((snowflake) => snowflake.y < canvas.height);
-  redSnowflakes.filter((red) => red.y < canvas.height);
+  snowflakes.filter((snowflake) => snowflake.y < canvas.height); 
+  redSnowflakes.filter((red) => red.y < canvas.height); 
 
   checkCollisions();
 }
@@ -208,26 +215,34 @@ function gameLoop() {
   }
 }
 
+//this is for the score display shows the scores fingers crossed it works
 function updateScoreAndCoinsDisplay() {
   document.getElementById("scoreDisplay").innerText = `Score: ${score}`;
   document.getElementById("coinsDisplay").innerText = `Coins: ${coins}`;
 }
 
+//Shop model opening 
 function openShop() {
   document.getElementById("shopModal").style.display = "flex";
 }
 
+//Shop model closing 
 function closeShop() {
   document.getElementById("shopModal").style.display = "none";
 }
 
+// The speed boost if it works is still unclear
 function buySpeedBoost() {
   if (coins >= 10) {
     coins -= 10;
     speedBoostActive = true;
     updateScoreAndCoinsDisplay();
+    snowflakeSpeed += 1;
+    redSnowflakeSpeed += 1;
     setTimeout(() => {
       speedBoostActive = false;
+      snowflakeSpeed -= 1; 
+      redSnowflakeSpeed -= 1; 
     }, speedBoostDuration);
   }
 }
@@ -243,4 +258,8 @@ function buyExtraLife() {
 document.getElementById("playButton").addEventListener("click", startGame);
 document.getElementById("restartButton").addEventListener("click", restartGame);
 document.getElementById("menuButton").addEventListener("click", returnToMenu);
+// Shope closing when clicked
 document.getElementById("closeShopButton").addEventListener("click", closeShop);
+
+// Shop Icon functionality
+document.getElementById("shopIcon").addEventListener("click", openShop);
