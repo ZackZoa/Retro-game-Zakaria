@@ -14,8 +14,7 @@
       <p class="game-tagline">Catch the white snowflakes, avoid the red ones, and reach the top!</p>
       <button id="playButton" class="play-button">Start Game</button>
 
-      <!-- Shop Icon -->
-      <button id="shopButton" class="shop-icon">🛒</button>
+      <button id="shopIcon" class="shop-icon">🛒 </button>  
     </div>
 
     <div class="instructions">
@@ -40,11 +39,13 @@
 
   <canvas id="gameCanvas"></canvas>
 
+  <div id="coinsDisplay" style="position: absolute; top: 20px; right: 20px; font-size: 18px; color: white;">Coins: 0</div>
+
   <!-- Shop Model -->
   <div id="shopModal" class="shop-modal">
     <div class="shop-container">
       <h2>Shop</h2>
-      <p>Coins: <span id="coinsDisplay">0</span></p>
+      <p>Coins: <span id="shopCoinsDisplay">0</span></p> <!-- Id -->
       <button id="speedBoostButton" class="shop-item" onclick="buySpeedBoost()">Speed Boost (10 Coins)</button>
       <button id="extraLifeButton" class="shop-item" onclick="buyExtraLife()">Extra Life (20 Coins)</button>
       <button id="closeShopButton" class="shop-item">Close Shop</button>
