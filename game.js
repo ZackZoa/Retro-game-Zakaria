@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
 
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
   canvas.height = window.innerHeight;
 
   const playerImg = new Image();
-  playerImg.src = "../retro-images/player.png";
+  playerImg.src = "../Retro-game-Zakaria/retro-images/player.png";
 
   playerImg.onload = () => {
     document.getElementById("playButton").disabled = false;
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let gameWon = false;
   let speedBoostActive = false;
   let extraLifeActive = false;
-  let speedBoostCooldown = false;
+  let speedBoostCooldownActive = false;
   let extraLifeCooldown = false;
 
   const keys = {};
@@ -46,20 +46,31 @@ document.addEventListener("DOMContentLoaded", function() {
   let speedBoostTimeout;
   let extraLifeTimeout;
 
-  let speedBoostCount = 0;
-  let speedBoostCooldownActive = false;
-
   const speedBoostCounter = document.createElement("div");
   speedBoostCounter.classList.add("speed-boost-counter");
   document.body.appendChild(speedBoostCounter);
 
+  const speedBoostButton = document.getElementById("speedBoostButton");
+  const extraLifeButton = document.getElementById("extraLifeButton");
+
+  const speedBoostIcon = document.getElementById("speedBoostIcon");
+  const extraLifeIcon = document.getElementById("extraLifeIcon");
+
+  // Initial states for abilities
+  let speedBoostAvailable = false;
+  let extraLifeAvailable = false;
+
   window.addEventListener("keydown", (e) => {
     keys[e.key] = true;
     if (e.key === "e" || e.key === "E") {
-      buySpeedBoost();
+      if (speedBoostAvailable) {
+        buySpeedBoost();
+      }
     }
     if (e.key === "r" || e.key === "R") {
-      buyExtraLife();
+      if (extraLifeAvailable) {
+        buyExtraLife();
+      }
     }
   });
 
@@ -202,28 +213,22 @@ document.addEventListener("DOMContentLoaded", function() {
       red.y += redSnowflakeSpeed + Math.floor(score / 10);
     });
 
-    snowflakes = snowflakes.filter((snowflake) => snowflake.y < canvas.height);
-    redSnowflakes = redSnowflakes.filter((red) => red.y < canvas.height);
-
-    checkCollisions();
+    snowflakes = snowflakes.filter((snowflake) => snowflake.y <= canvas.height);
+    redSnowflakes = redSnowflakes.filter((red) => red.y <= canvas.height);
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function gameLoop() {
+    if (!gameRunning) return;
 
-    if (player.glowEffect) {
-      ctx.strokeStyle = "gold";
-      ctx.lineWidth = 8;
-      ctx.strokeRect(player.x - 5, player.y - 5, player.width + 10, player.height + 10);
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    update();
+    checkCollisions();
 
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
     snowflakes.forEach((snowflake) => {
       ctx.fillStyle = snowflake.color;
-      ctx.beginPath();
-      ctx.arc(snowflake.x, snowflake.y, snowflake.width / 2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(snowflake.x, snowflake.y, snowflake.width, snowflake.height);
     });
 
     redSnowflakes.forEach((red) => {
@@ -231,98 +236,53 @@ document.addEventListener("DOMContentLoaded", function() {
       ctx.fillRect(red.x, red.y, red.width, red.height);
     });
 
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText(`Score: ${score}`, 20, 30);
-  }
-
-  function gameLoop() {
-    if (gameRunning) {
-      update();
-      draw();
-      requestAnimationFrame(gameLoop);
-    }
+    requestAnimationFrame(gameLoop);
   }
 
   function updateScoreAndCoinsDisplay() {
-    const coinsDisplay = document.getElementById("coinsDisplay");
-    if (coinsDisplay) {
-      coinsDisplay.innerText = `Coins: ${coins}`;
-    }
-
-    const shopCoinsDisplay = document.getElementById("shopCoinsDisplay");
-    if (shopCoinsDisplay) {
-      shopCoinsDisplay.innerText = `Coins: ${coins}`;
-    }
-  }
-
-  function openShop() {
-    document.getElementById("shopModal").style.display = "flex";
-  }
-
-  function closeShop() {
-    document.getElementById("shopModal").style.display = "none";
+    document.getElementById("coinsDisplay").textContent = `Coins: ${coins}`;
+    document.getElementById("shopCoinsDisplay").textContent = coins;
   }
 
   function buySpeedBoost() {
-    if (coins >= 10 && !speedBoostCooldownActive) {
+    if (coins >= 10 && !speedBoostActive) {
+      speedBoostActive = true;
       coins -= 10;
-      speedBoostCount++;
       updateScoreAndCoinsDisplay();
-
-      speedBoostCooldownActive = true;
-      setTimeout(() => {
-        speedBoostCooldownActive = false;
-        speedBoostCount = 0;
-        updateSpeedBoostCounter();
-      }, cooldownDuration);
-
-      playerSpeed *= 2;
-      updateSpeedBoostCounter();
-
-      setTimeout(() => {
-        playerSpeed /= 2;
+      speedBoostIcon.disabled = true;
+      speedBoostTimeout = setTimeout(() => {
+        speedBoostActive = false;
+        speedBoostIcon.disabled = false;
       }, speedBoostDuration);
     }
   }
 
-  function updateSpeedBoostCounter() {
-    speedBoostCounter.innerText = `Speed Boosts: ${speedBoostCount}`;
-  }
-
   function buyExtraLife() {
-    if (coins >= 20 && !extraLifeCooldown) {
-      coins -= 20;
+    if (coins >= 20) {
       extraLifeActive = true;
-      localStorage.setItem("coins", coins);
+      coins -= 20;
       updateScoreAndCoinsDisplay();
-
-      extraLifeCooldown = true;
-      player.glowEffect = true;
-      setTimeout(() => {
-        extraLifeCooldown = false;
+      extraLifeIcon.disabled = true;
+      extraLifeTimeout = setTimeout(() => {
         extraLifeActive = false;
-        player.glowEffect = false;
+        extraLifeIcon.disabled = false;
       }, extraLifeDuration);
     }
   }
 
+  function toggleShop() {
+    document.getElementById("shopModal").style.display =
+      document.getElementById("shopModal").style.display === "block"
+        ? "none"
+        : "block";
+  }
+
   document.getElementById("playButton").addEventListener("click", startGame);
-  document.getElementById("restartButton").addEventListener("click", restartGame);
-  document.getElementById("menuButton").addEventListener("click", returnToMenu);
-  document.getElementById("closeShopButton").addEventListener("click", closeShop);
-  document.getElementById("shopIcon").addEventListener("click", openShop);
-
-  const speedBoostIcon = document.createElement("button");
-  speedBoostIcon.innerHTML = "⚡";
-  speedBoostIcon.classList.add("ability-icon");
-  document.body.appendChild(speedBoostIcon);
-
-  const extraLifeIcon = document.createElement("button");
-  extraLifeIcon.innerHTML = "❤️";
-  extraLifeIcon.classList.add("ability-icon");
-  document.body.appendChild(extraLifeIcon);
-
-  speedBoostIcon.addEventListener("click", buySpeedBoost);
-  extraLifeIcon.addEventListener("click", buyExtraLife);
+  document.getElementById("restartButton").addEventListener("click", startGame);
+  document.getElementById("menuButton").addEventListener("click", () => {
+    document.getElementById("deathScreen").style.display = "none";
+    document.getElementById("openingScreen").style.display = "block";
+  });
+  document.getElementById("shopIcon").addEventListener("click", toggleShop);
+  document.getElementById("closeShopButton").addEventListener("click", toggleShop);
 });
