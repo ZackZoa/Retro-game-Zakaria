@@ -2,11 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
 
-  let name = localStorage.getItem("name");
-  console.log(name);
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth - 20;
+  canvas.height = window.innerHeight - 20;
 
   const playerImg = new Image();
   playerImg.src = "../Retro-game-Zakaria/retro-images/player.png";
@@ -34,8 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let gameWon = false;
   let speedBoostActive = false;
   let extraLifeActive = false;
-  let speedBoostCooldownActive = false;
-  let extraLifeCooldown = false;
 
   const keys = {};
   let playerSpeed = 3;
@@ -46,19 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let speedBoostTimeout;
   let extraLifeTimeout;
 
-  const speedBoostCounter = document.createElement("div");
-  speedBoostCounter.classList.add("speed-boost-counter");
-  document.body.appendChild(speedBoostCounter);
-
-  const speedBoostButton = document.getElementById("speedBoostButton");
-  const extraLifeButton = document.getElementById("extraLifeButton");
-
-  const speedBoostIcon = document.getElementById("speedBoostIcon");
-  const extraLifeIcon = document.getElementById("extraLifeIcon");
-
-  // Initial states for abilities
-  let speedBoostAvailable = false;
-  let extraLifeAvailable = false;
+  const speedBoostIcon = document.getElementById("speedBoostButton");
+  const extraLifeIcon = document.getElementById("extraLifeButton");
 
   window.addEventListener("keydown", (e) => {
     keys[e.key] = true;
@@ -137,25 +121,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function movePlayer() {
     if (keys["ArrowLeft"]) {
-      player.x -= playerSpeed;
-      if (player.x < 0) player.x = 0;
+      player.x = Math.max(0, player.x - playerSpeed);
     }
     if (keys["ArrowRight"]) {
-      player.x += playerSpeed;
-      if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+      player.x = Math.min(canvas.width - player.width, player.x + playerSpeed);
     }
     if (keys["ArrowUp"]) {
-      player.y -= playerSpeed;
-      if (player.y < 0) player.y = 0;
+      player.y = Math.max(0, player.y - playerSpeed);
     }
     if (keys["ArrowDown"]) {
-      player.y += playerSpeed;
-      if (player.y > canvas.height - player.height) player.y = canvas.height - player.height;
+      player.y = Math.min(canvas.height - player.height, player.y + playerSpeed);
     }
   }
 
   function checkCollisions() {
-    snowflakes.forEach((snowflake, index) => {
+    snowflakes = snowflakes.filter((snowflake, index) => {
       if (
         player.x < snowflake.x + snowflake.width &&
         player.x + player.width > snowflake.x &&
@@ -163,15 +143,15 @@ document.addEventListener("DOMContentLoaded", function () {
         player.y + player.height > snowflake.y
       ) {
         score += snowflake.width === 40 ? 5 : 1;
-        snowflakes.splice(index, 1);
-
         coins += Math.floor(score / 10);
         localStorage.setItem("coins", coins);
         updateScoreAndCoinsDisplay();
+        return false; 
       }
+      return true;
     });
 
-    redSnowflakes.forEach((red, index) => {
+    redSnowflakes = redSnowflakes.filter((red, index) => {
       if (
         player.x < red.x + red.width &&
         player.x + player.width > red.x &&
@@ -184,7 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           endGame(false);
         }
+        return false; 
       }
+      return true;
     });
 
     if (score >= 500 && !gameWon) {
@@ -250,6 +232,8 @@ document.addEventListener("DOMContentLoaded", function () {
       coins -= 10;
       updateScoreAndCoinsDisplay();
       speedBoostIcon.disabled = true;
+
+      if (speedBoostTimeout) clearTimeout(speedBoostTimeout); 
       speedBoostTimeout = setTimeout(() => {
         speedBoostActive = false;
         speedBoostIcon.disabled = false;
@@ -258,11 +242,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function buyExtraLife() {
-    if (coins >= 20) {
+    if (coins >= 20 && !extraLifeActive) {
       extraLifeActive = true;
       coins -= 20;
       updateScoreAndCoinsDisplay();
       extraLifeIcon.disabled = true;
+
+      if (extraLifeTimeout) clearTimeout(extraLifeTimeout); 
       extraLifeTimeout = setTimeout(() => {
         extraLifeActive = false;
         extraLifeIcon.disabled = false;
@@ -271,10 +257,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function toggleShop() {
-    document.getElementById("shopModal").style.display =
-      document.getElementById("shopModal").style.display === "block"
-        ? "none"
-        : "block";
+    const shopModal = document.getElementById("shopModal");
+    shopModal.classList.toggle("show");
   }
 
   document.getElementById("playButton").addEventListener("click", startGame);
@@ -285,4 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   document.getElementById("shopIcon").addEventListener("click", toggleShop);
   document.getElementById("closeShopButton").addEventListener("click", toggleShop);
+  document.getElementById("speedBoostButton").addEventListener("click", buySpeedBoost);
+  document.getElementById("extraLifeButton").addEventListener("click", buyExtraLife);
 });

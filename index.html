@@ -1,61 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frosty Heights</title>
-  
-  <!-- Favicon added here -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frosty Heights</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-  <div id="openingScreen" class="opening-screen">
-    <div class="menu-container">
-      <h1 class="game-title">Frosty Heights</h1>
-      <p class="game-tagline">Catch the white snowflakes, avoid the red ones, and reach the top!</p>
-      <button id="playButton" class="play-button">Start Game</button>
+    <div id="openingScreen" class="opening-screen">
+        <div class="menu-container">
+            <h1 class="game-title">Frosty Heights</h1>
+            <p class="game-tagline">Catch the white snowflakes, avoid the red ones, and reach the top!</p>
+            <button id="playButton" class="play-button">Start Game</button>
+            <button id="shopIcon" class="shop-icon">🛒</button>
+        </div>
 
-      <button id="shopIcon" class="shop-icon">🛒 </button>  
+        <div class="instructions">
+            <h2>How to Play</h2>
+            <ul>
+                <li>Move your player left and right using the <b>Arrow Keys</b>.</li>
+                <li>Catch <span class="white-text">White Snowflakes</span> for points.</li>
+                <li>Avoid <span class="red-text">Red Snowflakes</span> or you lose!</li>
+                <li>Stay focused, and aim for the highest score.</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="instructions">
-      <h2>How to Play</h2>
-      <ul>
-        <li>Move your player left and right using the <b>Arrow Keys</b>.</li>
-        <li>Catch <span class="white-text">White Snowflakes</span> for points.</li>
-        <li>Avoid <span class="red-text">Red Snowflakes</span> or you lose!</li>
-        <li>Stay focused, and aim for the highest score.</li>
-      </ul>
+    <div id="deathScreen" class="death-screen" style="display: none;">
+        <h1>Game Over</h1>
+        <p>Your Score: <span id="finalScore"></span></p>
+        <div class="death-buttons">
+            <button id="restartButton" class="restart-button">Restart Game</button>
+            <button id="menuButton" class="menu-button">Return to Menu</button>
+        </div>
     </div>
-  </div>
 
-  <div id="deathScreen" class="death-screen" style="display: none;">
-    <h1>Game Over</h1>
-    <p>Your Score: <span id="finalScore"></span></p>
-    <div class="death-buttons">
-      <button id="restartButton" class="restart-button">Restart Game</button>
-      <button id="menuButton" class="menu-button">Return to Menu</button> 
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="coinsDisplay" style="position: absolute; top: 20px; right: 20px; font-size: 18px; color: white;">Coins: 0</div>
+
+    <div id="shopModal" class="shop-modal">
+        <div class="shop-container">
+            <h2>Shop</h2>
+            <p>Coins: <span id="shopCoinsDisplay">0</span></p> <!-- Coins in the shop -->
+            <button id="speedBoostButton" class="shop-item">Speed Boost (10 Coins)</button>
+            <button id="extraLifeButton" class="shop-item">Extra Life (20 Coins)</button>
+            <button id="closeShopButton" class="shop-item">Close Shop</button>
+        </div>
     </div>
-  </div>
 
-  <canvas id="gameCanvas"></canvas>
-
-  <div id="coinsDisplay" style="position: absolute; top: 20px; right: 20px; font-size: 18px; color: white;">Coins: 0</div>
-
-  <!-- Shop Model -->
-  <div id="shopModal" class="shop-modal">
-    <div class="shop-container">
-      <h2>Shop</h2>
-      <p>Coins: <span id="shopCoinsDisplay">0</span></p> <!-- Id -->
-      <button id="speedBoostButton" class="shop-item" onclick="buySpeedBoost()">Speed Boost (10 Coins)</button>
-      <button id="extraLifeButton" class="shop-item" onclick="buyExtraLife()">Extra Life (20 Coins)</button>
-      <button id="closeShopButton" class="shop-item">Close Shop</button>
-    </div>
-  </div>
-
-  <script src="game.js"></script>
+    <script src="game.js"></script>
 </body>
+
 </html>
