@@ -28,6 +28,14 @@
                 <li>Stay focused, and aim for the highest score.</li>
             </ul>
         </div>
+
+        <div id="settings">
+            <label for="snowflakeCount">Number of Snowflakes:</label>
+            <input type="number" id="snowflakeCount" value="5" min="1" max="100">
+            
+            <label for="redSnowflakeCount">Number of Red Snowflakes:</label>
+            <input type="number" id="redSnowflakeCount" value="2" min="0" max="50">
+        </div>
     </div>
 
     <div id="deathScreen" class="death-screen" style="display: none;">
@@ -46,7 +54,7 @@
     <div id="shopModal" class="shop-modal">
         <div class="shop-container">
             <h2>Shop</h2>
-            <p>Coins: <span id="shopCoinsDisplay">0</span></p> <!-- Coins in the shop -->
+            <p>Coins: <span id="shopCoinsDisplay">0</span></p>
             <button id="speedBoostButton" class="shop-item">Speed Boost (10 Coins)</button>
             <button id="extraLifeButton" class="shop-item">Extra Life (20 Coins)</button>
             <button id="closeShopButton" class="shop-item">Close Shop</button>

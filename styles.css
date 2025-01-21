@@ -152,6 +152,12 @@ canvas {
   margin-bottom: 30px;
 }
 
+.death-buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 10px; /* Space between buttons */
+}
+
 .death-screen button {
   padding: 10px 20px;
   margin: 10px;
