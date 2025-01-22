@@ -26,7 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const redSnowflakeSpeed = 3;
 
     let score = 0;
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let coins = 0;
+    let localCoins = parseInt(localStorage.getItem("coins")) || 0; // Initialize coins from local storage
+    coins = localCoins;
+
     let gameRunning = false;
     let gameWon = false;
     let speedBoostActive = false;
@@ -44,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const speedBoostIcon = document.getElementById("speedBoostButton");
     const extraLifeIcon = document.getElementById("extraLifeButton");
+
+    updateScoreAndCoinsDisplay();
 
     window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
@@ -87,8 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
         player.x = canvas.width / 2 - player.width / 2;
         player.y = canvas.height - 60;
         score = 0;
-
-        coins = parseInt(localStorage.getItem("coins")) || 0;
+        coins = localCoins; // Reset coins from local storage
         localStorage.setItem("coins", coins);
 
         gameRunning = false;
@@ -150,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (distance < player.width / 2 + snowflake.radius) {
                 score += snowflake.radius === 20 ? 5 : 1;
                 coins += Math.floor(score / 10);
-                localStorage.setItem("coins", coins);
+                localStorage.setItem("coins", coins); // Update local storage
                 updateScoreAndCoinsDisplay();
                 return false; 
             }
@@ -165,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (distance < player.width / 2 + red.radius) {
                 if (extraLifeActive) {
                     extraLifeActive = false;
-                    return false; // Remove red snowflake
+                    return false; 
                 } else {
                     endGame(false);
                 }
@@ -250,7 +254,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (coins >= 10 && !speedBoostActive) {
             speedBoostActive = true;
             coins -= 10;
-            updateScoreAndCoinsDisplay();
+            localStorage.setItem("coins", coins); // Update local storage
+            updateScoreAndCoinsDisplay(); // Update display with new coins value
             speedBoostIcon.disabled = true;
 
             if (speedBoostTimeout) clearTimeout(speedBoostTimeout); 
@@ -265,7 +270,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (coins >= 20 && !extraLifeActive) {
             extraLifeActive = true;
             coins -= 20;
-            updateScoreAndCoinsDisplay();
+            localStorage.setItem("coins", coins); // Update local storage
+            updateScoreAndCoinsDisplay(); // Update display with new coins value
             extraLifeIcon.disabled = true;
 
             if (extraLifeTimeout) clearTimeout(extraLifeTimeout); 
