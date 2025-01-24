@@ -11,6 +11,9 @@
 
 <body>
 
+    <canvas id="backgroundCanvas">
+        <canvas id="oceanCanvas"></canvas>
+    </canvas>
     <div id="openingScreen" class="opening-screen">
         <div class="menu-container">
             <h1 class="game-title">Frosty Heights</h1>
@@ -39,8 +42,9 @@
     </div>
 
     <div id="deathScreen" class="death-screen" style="display: none;">
-        <h1>Game Over</h1>
-        <p>Your Score: <span id="finalScore"></span></p>
+        <h1 class="death-title">Game Over</h1>
+        <p class="death-score">Your Score: <span id="finalScore"></span></p>
+        <p class="death-message">Better luck next time!</p>
         <div class="death-buttons">
             <button id="restartButton" class="restart-button">Restart Game</button>
             <button id="menuButton" class="menu-button">Return to Menu</button>

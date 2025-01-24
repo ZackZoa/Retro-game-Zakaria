@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const backgroundCanvas = document.getElementById("backgroundCanvas");
+    const bgCtx = backgroundCanvas.getContext("2d");
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
+
+    backgroundCanvas.width = window.innerWidth;
+    backgroundCanvas.height = window.innerHeight;
 
     canvas.width = window.innerWidth - 20;
     canvas.height = window.innerHeight - 20;
@@ -17,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         y: canvas.height - 60,
         width: 50,
         height: 50,
-        glowEffect: false,
+        glowColor: 'transparent',
     };
 
     let snowflakes = [];
@@ -39,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let playerSpeed = 3;
     const speedBoostDuration = 5000; // 5 seconds
     const extraLifeDuration = 3000; // 3 seconds
-    const cooldownDuration = 20000; // 20 seconds
 
     let speedBoostTimeout;
     let extraLifeTimeout;
@@ -73,6 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas.height = window.innerHeight;
         player.x = canvas.width / 2 - player.width / 2;
         player.y = canvas.height - 60;
+        backgroundCanvas.width = window.innerWidth;
+        backgroundCanvas.height = window.innerHeight;
     });
 
     function startGame() {
@@ -147,11 +153,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function checkCollisions() {
         snowflakes = snowflakes.filter((snowflake) => {
-            const dx = player.x - snowflake.x;
-            const dy = player.y - snowflake.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const snowflakeHitbox = {
+                x: snowflake.x,
+                y: snowflake.y,
+                width: snowflake.radius * 2, 
+                height: snowflake.radius * 2, 
+            };
 
-            if (distance < player.width / 2 + snowflake.radius) {
+            const playerHitbox = {
+                x: player.x,
+                y: player.y,
+                width: player.width,
+                height: player.height,
+            };
+
+            if (isColliding(playerHitbox, snowflakeHitbox)) {
                 score += snowflake.radius === 20 ? 5 : 1;
                 coins += Math.floor(score / 10);
                 localStorage.setItem("coins", coins); // Update local storage
@@ -162,13 +178,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         redSnowflakes = redSnowflakes.filter((red) => {
-            const dx = player.x - red.x;
-            const dy = player.y - red.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const redHitbox = {
+                x: red.x,
+                y: red.y,
+                width: red.radius * 2,
+                height: red.radius * 2,
+            };
 
-            if (distance < player.width / 2 + red.radius) {
+            const playerHitbox = {
+                x: player.x,
+                y: player.y,
+                width: player.width,
+                height: player.height,
+            };
+
+            if (isColliding(playerHitbox, redHitbox)) {
                 if (extraLifeActive) {
                     extraLifeActive = false;
+                    player.glowColor = 'transparent'; 
                     return false; 
                 } else {
                     endGame(false);
@@ -182,23 +209,34 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function isColliding(rect1, rect2) {
+        return (
+            rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y
+        );
+    }
+
     function endGame(won) {
-        gameRunning = false;
+        gameRunning = false; 
         gameWon = won;
         document.getElementById("deathScreen").style.display = "flex";
         document.getElementById("finalScore").innerText = won
             ? "Congratulations! You won with 500 points!"
             : `You scored ${score} points. Try again!`;
-        canvas.style.display = "none";
+        canvas.style.display = "none"; 
     }
 
     function update() {
         movePlayer();
 
         if (speedBoostActive) {
-            player.glowEffect = true; 
+            player.glowColor = 'rgba(0, 255, 0, 0.5)'; 
+        } else if (extraLifeActive) {
+            player.glowColor = 'rgba(255, 0, 0, 0.5)'; 
         } else {
-            player.glowEffect = false; 
+            player.glowColor = 'transparent'; 
         }
 
         snowflakes.forEach((snowflake) => {
@@ -220,12 +258,9 @@ document.addEventListener("DOMContentLoaded", function () {
         update();
         checkCollisions();
 
-        if (player.glowEffect) {
-            ctx.shadowColor = 'rgba(0, 255, 0, 0.5)'; 
-            ctx.shadowBlur = 20; 
-        } else {
-            ctx.shadowColor = 'transparent'; 
-        }
+        ctx.shadowColor = player.glowColor; 
+        ctx.shadowBlur = 20; 
+
         ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
         snowflakes.forEach((snowflake) => {
@@ -255,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
             speedBoostActive = true;
             coins -= 10;
             localStorage.setItem("coins", coins); // Update local storage
-            updateScoreAndCoinsDisplay(); // Update display with new coins value
+            updateScoreAndCoinsDisplay(); 
             speedBoostIcon.disabled = true;
 
             if (speedBoostTimeout) clearTimeout(speedBoostTimeout); 
@@ -271,13 +306,15 @@ document.addEventListener("DOMContentLoaded", function () {
             extraLifeActive = true;
             coins -= 20;
             localStorage.setItem("coins", coins); // Update local storage
-            updateScoreAndCoinsDisplay(); // Update display with new coins value
+            updateScoreAndCoinsDisplay(); 
             extraLifeIcon.disabled = true;
+            player.glowColor = 'rgba(255, 0, 0, 0.5)'; 
 
             if (extraLifeTimeout) clearTimeout(extraLifeTimeout); 
             extraLifeTimeout = setTimeout(() => {
                 extraLifeActive = false;
                 extraLifeIcon.disabled = false;
+                player.glowColor = 'transparent'; 
             }, extraLifeDuration);
         }
     }
@@ -302,4 +339,43 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("closeShopButton").addEventListener("click", toggleShop);
     document.getElementById("speedBoostButton").addEventListener("click", buySpeedBoost);
     document.getElementById("extraLifeButton").addEventListener("click", buyExtraLife);
+
+    let waveOffset = 0;
+
+    function drawBackground() {
+        bgCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        
+        const waveCount = 5; 
+        const waveHeight = 20; 
+        const waveLength = 200; 
+
+        for (let i = 0; i < waveCount; i++) {
+            bgCtx.beginPath();
+            bgCtx.moveTo(0, backgroundCanvas.height / 2 + Math.sin((i + waveOffset) * 0.5) * waveHeight);
+            
+            for (let x = 0; x < backgroundCanvas.width; x++) {
+                bgCtx.lineTo(x, backgroundCanvas.height / 2 + Math.sin((x / waveLength) + (i + waveOffset) * 0.5) * waveHeight);
+            }
+            
+            bgCtx.lineTo(backgroundCanvas.width, backgroundCanvas.height);
+            bgCtx.lineTo(0, backgroundCanvas.height);
+            bgCtx.closePath();
+            
+            const gradient = bgCtx.createLinearGradient(0, 0, 0, backgroundCanvas.height);
+            gradient.addColorStop(0, 'rgba(0, 150, 255, 0.7)');
+            gradient.addColorStop(1, 'rgba(0, 100, 200, 0.7)');
+            
+            bgCtx.fillStyle = gradient;
+            bgCtx.fill();
+        }
+
+        waveOffset += 0.05;
+    }
+
+    function animateBackground() {
+        drawBackground();
+        requestAnimationFrame(animateBackground);
+    }
+
+    animateBackground();
 });
