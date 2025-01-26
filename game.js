@@ -31,9 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const redSnowflakeSpeed = 3;
 
     let score = 0;
-    let coins = 0;
-    let localCoins = parseInt(localStorage.getItem("coins")) || 0; // Initialize coins from local storage
-    coins = localCoins;
+    let coins = parseInt(localStorage.getItem("coins")) || 0; // Initialize coins from local storage
 
     let gameRunning = false;
     let gameWon = false;
@@ -56,15 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
-        if (e.key === "e" || e.key === "E") {
-            if (coins >= 10 && !speedBoostActive) {
-                buySpeedBoost();
-            }
+        if (e.key.toLowerCase() === "e") {
+            buySpeedBoost();
         }
-        if (e.key === "r" || e.key === "R") {
-            if (coins >= 20 && !extraLifeActive) {
-                buyExtraLife();
-            }
+        if (e.key.toLowerCase() === "r") {
+            buyExtraLife();
         }
     });
 
@@ -73,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     window.addEventListener("resize", () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 20;
         player.x = canvas.width / 2 - player.width / 2;
         player.y = canvas.height - 60;
         backgroundCanvas.width = window.innerWidth;
@@ -98,8 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
         player.x = canvas.width / 2 - player.width / 2;
         player.y = canvas.height - 60;
         score = 0;
-        coins = localCoins; // Reset coins from local storage
-        localStorage.setItem("coins", coins);
 
         gameRunning = false;
         gameWon = false;
@@ -194,8 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (isColliding(playerHitbox, redHitbox)) {
                 if (extraLifeActive) {
-                    extraLifeActive = false;
-                    player.glowColor = 'transparent'; 
+                    // If extra life is active, ignore the collision
                     return false; 
                 } else {
                     endGame(false);
@@ -288,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function buySpeedBoost() {
         if (coins >= 10 && !speedBoostActive) {
             speedBoostActive = true;
+            playerSpeed = 6; // Increase player speed
             coins -= 10;
             localStorage.setItem("coins", coins); // Update local storage
             updateScoreAndCoinsDisplay(); 
@@ -296,6 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (speedBoostTimeout) clearTimeout(speedBoostTimeout); 
             speedBoostTimeout = setTimeout(() => {
                 speedBoostActive = false;
+                playerSpeed = 3; // Reset player speed
                 speedBoostIcon.disabled = false;
             }, speedBoostDuration);
         }
