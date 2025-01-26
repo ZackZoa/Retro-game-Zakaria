@@ -15,7 +15,8 @@ body {
   align-items: center;
 }
 
-#oceanCanvas {
+/* Canvas styling */
+#oceanCanvas, #backgroundCanvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -23,31 +24,15 @@ body {
   height: 100%;
 }
 
-#backgroundCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
+#backgroundCanvas { z-index: 0; }
+canvas { display: none; z-index: 1; }
 
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: none;
-  z-index: 1;
-}
-
+/* Opening screen */
 .opening-screen {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
-  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,15 +47,11 @@ canvas {
   text-shadow: 0 0 10px #00d9ff, 0 0 20px #00b3cc;
 }
 
-.game-tagline {
-  font-size: 20px;
-  margin-bottom: 40px;
-}
+.game-tagline { font-size: 20px; margin-bottom: 40px; }
 
 .play-button {
   padding: 15px 40px;
   font-size: 18px;
-  color: white;
   background: #00b4d8;
   border: none;
   border-radius: 5px;
@@ -83,6 +64,75 @@ canvas {
   box-shadow: 0 0 10px #0077b6;
 }
 
+/* Death screen (fixed version) */
+.death-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  background: linear-gradient(135deg, #2c2f33, #23272a);
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.death-title {
+  font-size: 36px;
+  color: #ff4f4f;
+  text-shadow: 0 0 10px #ff4f4f;
+  margin: 0;
+}
+
+.death-score { font-size: 24px; color: #00b4d8; margin: 0; }
+.death-message { font-size: 18px; color: #d3d3d3; margin: 0; }
+
+.death-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.death-screen button {
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+#restartButton {
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  color: white;
+}
+
+#restartButton:hover {
+  background: linear-gradient(135deg, #005f8e, #0077b6);
+  box-shadow: 0 0 10px rgba(0, 119, 182, 0.7);
+}
+
+.death-screen #menuButton {
+  background: linear-gradient(135deg, #ff6347, #e2533d);
+  color: white;
+  position: static;
+}
+
+.death-screen #menuButton:hover {
+  background: linear-gradient(135deg, #e2533d, #cc4a37);
+  box-shadow: 0 0 10px rgba(255, 99, 71, 0.7);
+}
+
+/* Shop system */
 #shopModal {
   position: fixed;
   top: 0;
@@ -91,29 +141,25 @@ canvas {
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
   display: none;
-  z-index: 1000;
+  z-index: 10000;
   justify-content: center;
   align-items: center;
 }
 
-#shopModal.show {
-  display: flex;
-}
+#shopModal.show { display: flex; }
 
 .shop-container {
   background: rgba(0, 0, 0, 0.9);
   padding: 20px;
   border-radius: 10px;
-  text-align: center;
-  color: white;
   width: 300px;
+  text-align: center;
 }
 
 .shop-item {
   padding: 10px 20px;
   margin: 10px;
   font-size: 18px;
-  color: white;
   background: #00b4d8;
   border: none;
   border-radius: 5px;
@@ -126,95 +172,7 @@ canvas {
   box-shadow: 0 0 10px #0077b6;
 }
 
-#menuButton {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px;
-  background-color: #ff6347;
-  color: white;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  z-index: 9999;
-}
-
-#menuButton:hover {
-  background-color: #e2533d;
-}
-
-.death-screen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 500px;
-  background: linear-gradient(135deg, #2c2f33, #23272a);
-  padding: 40px;
-  border-radius: 15px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-  animation: fadeIn 0.5s ease-out;
-  z-index: 1001;
-}
-
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translate(-50%, -60%);
-  }
-  to {
-      opacity: 1;
-      transform: translate(-50%, -50%);
-  }
-}
-
-.death-title {
-  font-size: 48px;
-  margin-bottom: 20px;
-  color: #ff4f4f;
-  text-shadow: 0 0 10px #ff4f4f, 0 0 20px #d00000;
-}
-
-.death-score {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #00b4d8;
-}
-
-.death-message {
-  font-size: 20px;
-  margin-bottom: 30px;
-  color: #d3d3d3;
-}
-
-.death-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-}
-
-.death-screen button {
-  padding: 15px 25px;
-  font-size: 20px;
-  color: white;
-  background: linear-gradient(135deg, #0077b6, #00b4d8);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  max-width: 200px;
-}
-
-.death-screen button:hover {
-  background: linear-gradient(135deg, #005f8e, #0077b6);
-  box-shadow: 0 0 15px rgba(0, 119, 182, 0.7);
-}
-
+/* Other UI elements */
 #coinsDisplay {
   position: absolute;
   top: 20px;
@@ -232,6 +190,4 @@ canvas {
   color: white;
 }
 
-.shop-icon:hover {
-  color: #00d9ff;
-}
+.shop-icon:hover { color: #00d9ff; }

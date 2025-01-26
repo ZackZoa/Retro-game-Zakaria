@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const redSnowflakeSpeed = 3;
 
     let score = 0;
-    let coins = parseInt(localStorage.getItem("coins")) || 0; // Initialize coins from local storage
+    let coins = parseInt(localStorage.getItem("coins")) || 0;
 
     let gameRunning = false;
     let gameWon = false;
@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const keys = {};
     let playerSpeed = 3;
-    const speedBoostDuration = 5000; // 5 seconds
-    const extraLifeDuration = 3000; // 3 seconds
+    const speedBoostDuration = 5000;
+    const extraLifeDuration = 3000;
 
     let speedBoostTimeout;
     let extraLifeTimeout;
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function resetGame() {
-        clearInterval(snowflakeSpawnInterval); 
+        clearInterval(snowflakeSpawnInterval);
         snowflakes.length = 0;
         redSnowflakes.length = 0;
         player.x = canvas.width / 2 - player.width / 2;
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 snowflakes.push({
                     x: Math.random() * (canvas.width - 20),
                     y: -20,
-                    radius: Math.random() > 0.5 ? 10 : 20, 
+                    radius: Math.random() > 0.5 ? 10 : 20,
                     color: "#FFFFFF",
                 });
             }
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 redSnowflakes.push({
                     x: Math.random() * (canvas.width - 20),
                     y: -20,
-                    radius: 10, 
+                    radius: 10,
                     color: "#FF0000",
                 });
             }
@@ -148,8 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const snowflakeHitbox = {
                 x: snowflake.x,
                 y: snowflake.y,
-                width: snowflake.radius * 2, 
-                height: snowflake.radius * 2, 
+                width: snowflake.radius * 2,
+                height: snowflake.radius * 2,
             };
 
             const playerHitbox = {
@@ -162,9 +162,9 @@ document.addEventListener("DOMContentLoaded", function () {
             if (isColliding(playerHitbox, snowflakeHitbox)) {
                 score += snowflake.radius === 20 ? 5 : 1;
                 coins += Math.floor(score / 10);
-                localStorage.setItem("coins", coins); // Update local storage
+                localStorage.setItem("coins", coins);
                 updateScoreAndCoinsDisplay();
-                return false; 
+                return false;
             }
             return true;
         });
@@ -186,13 +186,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (isColliding(playerHitbox, redHitbox)) {
                 if (extraLifeActive) {
-                    // If extra life is active, ignore the collision
-                    return false; 
+                    return false;
                 } else {
                     endGame(false);
                 }
             }
-            return true; 
+            return true;
         });
 
         if (score >= 500 && !gameWon) {
@@ -210,24 +209,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function endGame(won) {
-        gameRunning = false; 
+        gameRunning = false;
         gameWon = won;
         document.getElementById("deathScreen").style.display = "flex";
         document.getElementById("finalScore").innerText = won
             ? "Congratulations! You won with 500 points!"
             : `You scored ${score} points. Try again!`;
-        canvas.style.display = "none"; 
+        canvas.style.display = "none";
     }
 
     function update() {
         movePlayer();
 
         if (speedBoostActive) {
-            player.glowColor = 'rgba(0, 255, 0, 0.5)'; 
+            player.glowColor = 'rgba(0, 255, 0, 0.5)';
         } else if (extraLifeActive) {
-            player.glowColor = 'rgba(255, 0, 0, 0.5)'; 
+            player.glowColor = 'rgba(255, 0, 0, 0.5)';
         } else {
-            player.glowColor = 'transparent'; 
+            player.glowColor = 'transparent';
         }
 
         snowflakes.forEach((snowflake) => {
@@ -249,8 +248,8 @@ document.addEventListener("DOMContentLoaded", function () {
         update();
         checkCollisions();
 
-        ctx.shadowColor = player.glowColor; 
-        ctx.shadowBlur = 20; 
+        ctx.shadowColor = player.glowColor;
+        ctx.shadowBlur = 20;
 
         ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
@@ -279,16 +278,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function buySpeedBoost() {
         if (coins >= 10 && !speedBoostActive) {
             speedBoostActive = true;
-            playerSpeed = 6; // Increase player speed
+            playerSpeed = 6;
             coins -= 10;
-            localStorage.setItem("coins", coins); // Update local storage
-            updateScoreAndCoinsDisplay(); 
+            localStorage.setItem("coins", coins);
+            updateScoreAndCoinsDisplay();
             speedBoostIcon.disabled = true;
 
-            if (speedBoostTimeout) clearTimeout(speedBoostTimeout); 
+            if (speedBoostTimeout) clearTimeout(speedBoostTimeout);
             speedBoostTimeout = setTimeout(() => {
                 speedBoostActive = false;
-                playerSpeed = 3; // Reset player speed
+                playerSpeed = 3;
                 speedBoostIcon.disabled = false;
             }, speedBoostDuration);
         }
@@ -298,16 +297,16 @@ document.addEventListener("DOMContentLoaded", function () {
         if (coins >= 20 && !extraLifeActive) {
             extraLifeActive = true;
             coins -= 20;
-            localStorage.setItem("coins", coins); // Update local storage
-            updateScoreAndCoinsDisplay(); 
+            localStorage.setItem("coins", coins);
+            updateScoreAndCoinsDisplay();
             extraLifeIcon.disabled = true;
-            player.glowColor = 'rgba(255, 0, 0, 0.5)'; 
+            player.glowColor = 'rgba(255, 0, 0, 0.5)';
 
-            if (extraLifeTimeout) clearTimeout(extraLifeTimeout); 
+            if (extraLifeTimeout) clearTimeout(extraLifeTimeout);
             extraLifeTimeout = setTimeout(() => {
                 extraLifeActive = false;
                 extraLifeIcon.disabled = false;
-                player.glowColor = 'transparent'; 
+                player.glowColor = 'transparent';
             }, extraLifeDuration);
         }
     }
@@ -319,14 +318,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("playButton").addEventListener("click", startGame);
     document.getElementById("restartButton").addEventListener("click", () => {
-        resetGame(); 
-        document.getElementById("deathScreen").style.display = "none"; 
-        startGame(); 
+        resetGame();
+        document.getElementById("deathScreen").style.display = "none";
+        startGame();
     });
     document.getElementById("menuButton").addEventListener("click", () => {
-        resetGame(); 
+        resetGame();
         document.getElementById("deathScreen").style.display = "none";
-        document.getElementById("openingScreen").style.display = "block"; 
+        document.getElementById("openingScreen").style.display = "block";
     });
     document.getElementById("shopIcon").addEventListener("click", toggleShop);
     document.getElementById("closeShopButton").addEventListener("click", toggleShop);
@@ -337,27 +336,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function drawBackground() {
         bgCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
-        
-        const waveCount = 5; 
-        const waveHeight = 20; 
-        const waveLength = 200; 
+
+        const waveCount = 5;
+        const waveHeight = 20;
+        const waveLength = 200;
 
         for (let i = 0; i < waveCount; i++) {
             bgCtx.beginPath();
             bgCtx.moveTo(0, backgroundCanvas.height / 2 + Math.sin((i + waveOffset) * 0.5) * waveHeight);
-            
+
             for (let x = 0; x < backgroundCanvas.width; x++) {
                 bgCtx.lineTo(x, backgroundCanvas.height / 2 + Math.sin((x / waveLength) + (i + waveOffset) * 0.5) * waveHeight);
             }
-            
+
             bgCtx.lineTo(backgroundCanvas.width, backgroundCanvas.height);
             bgCtx.lineTo(0, backgroundCanvas.height);
             bgCtx.closePath();
-            
+
             const gradient = bgCtx.createLinearGradient(0, 0, 0, backgroundCanvas.height);
             gradient.addColorStop(0, 'rgba(0, 150, 255, 0.7)');
             gradient.addColorStop(1, 'rgba(0, 100, 200, 0.7)');
-            
+
             bgCtx.fillStyle = gradient;
             bgCtx.fill();
         }
